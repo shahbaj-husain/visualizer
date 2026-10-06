@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>DSTL Visualizer 0.3 (Pro Edition)</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff;--fg:#1f1e1c;--mut:#6b6a63;--bd:#d6d4cb;--card:#f5f4ee;--ac:#185FA5;--acb:#E6F1FB;--new:#FAC775;--newt:#412402;--bad:#C93B3A;--ok:#0F6E56}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1720;--fg:#e8e6df;--mut:#a3a198;--bd:#2d3b4a;--card:#17222d;--ac:#85B7EB;--acb:#0C447C;--bad:#F0836F;--ok:#1D9E75}}
+:root[data-theme=dark]{--bg:#0f1720;--fg:#e8e6df;--mut:#a3a198;--bd:#2d3b4a;--card:#17222d;--ac:#85B7EB;--acb:#0C447C;--bad:#F0836F;--ok:#1D9E75}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:560px;margin:0 auto;padding:14px}
+h1{font-size:22px;margin:4px 0 2px;font-weight:500}h2{font-size:17px;margin:14px 0 6px;font-weight:500}
+.m{color:var(--mut);font-size:14px;margin:4px 0}
+button{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;cursor:pointer}
+button.on{background:var(--acb);border-color:var(--ac);color:var(--ac)}
+input[type=text]{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;width:100%}
+.r{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.er{color:var(--bad);font-size:13px;min-height:16px}
+.cv{background-color:var(--card);background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:18px 18px;border:1px solid var(--bd);border-radius:12px;padding:8px;overflow-x:auto;min-height:120px}
+table{border-collapse:collapse;margin:4px auto}td,th{border:1px solid var(--bd);padding:6px 10px;text-align:center;min-width:36px;font-weight:400}th{color:var(--mut)}
+.op{background:var(--acb)}.nw{background:var(--new);color:var(--newt)!important;font-weight:500}.bad{background:var(--bad);color:#fff!important}
+.T{color:var(--ok);font-weight:500}.F{color:var(--bad);font-weight:500}.z{color:var(--mut)}.o{font-weight:500}
+.chip{padding:3px 10px;border-radius:99px;border:1px solid var(--bd);min-width:34px;text-align:center;font-size:14px}.chip.dn{background:var(--fg);color:var(--bg)}
+.nd{fill:var(--card);stroke:var(--fg);stroke-width:1.5;transition:fill .3s;transform-box:fill-box;transform-origin:center}.tk{fill:var(--new);stroke:var(--newt);stroke-width:2}.nd.new{fill:var(--new)}.nd.cur{fill:var(--acb);stroke:var(--ac);stroke-width:3}.nd.done,.nd.ok{fill:var(--ok);stroke:var(--ok)}.nd.bad{stroke:var(--bad);stroke-width:3}
+.tx{fill:var(--fg);font-size:13px;font-weight:500}.tx.new{fill:var(--newt)}.tx.done,.tx.ok{fill:#fff}.bf{fill:var(--mut);font-size:11px}
+#nt{border-left:3px solid var(--ok);border-radius:0;background:var(--card);padding:10px 12px;margin:10px 0;min-height:56px;font-size:14px}
+@media(prefers-reduced-motion:no-preference){.an{animation:f .45s both}.nd.new{animation:pop .55s}@keyframes f{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}@keyframes pop{0%{transform:scale(.3)}60%{transform:scale(1.35)}100%{transform:scale(1)}}}
+.nd.bad{fill:var(--bad)}.nd.ok{fill:var(--ok)}.nd.cur{fill:var(--ac)}.tx.bad,.tx.cur{fill:var(--bg)}.tx.ok{fill:#fff}
+.ar{stroke:var(--mut);stroke-width:2}.ar.x{stroke:var(--bad);stroke-width:3}.ar.g{stroke:var(--ok);stroke-width:3}
+.hl{display:flex;gap:8px;justify-content:center;align-items:flex-end;flex-wrap:wrap}
+.hb{min-width:58px;border:2px solid var(--bd);border-radius:8px;padding:4px;display:flex;flex-direction:column-reverse;gap:4px;align-items:center;min-height:64px}
+@media(prefers-reduced-motion:no-preference){.ar.n{stroke-dasharray:1;animation:dr .7s both}@keyframes dr{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}}
+.hd{justify-content:space-between;gap:8px}
+.sel{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+.lg{position:sticky;bottom:0;z-index:2;display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;padding:10px 12px;background:var(--bg);border:2px solid var(--bd);border-radius:10px;font-weight:500}
+.lg i{display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;border:1px solid var(--fg);border-radius:4px}
+#nt{font-size:16px;line-height:1.65;border-left-width:5px}
+#vw,#side{overflow-x:auto;-webkit-overflow-scrolling:touch}
+#vw table.sm td,#vw table.sm th{padding:3px 5px;min-width:26px;font-size:12px}
+svg[data-dg] #ng g{cursor:grab;touch-action:none}svg[data-dg] #ng g:active{cursor:grabbing}
+#ng{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+@media(pointer:coarse){button,.sel{min-height:44px}svg[data-dg] .nd{r:21px}}
+@media(min-width:900px){#app{max-width:760px}}
+dialog{background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:12px;padding:16px;max-width:90vw;width:500px}
+dialog::backdrop{background:rgba(0,0,0,0.5)}
+textarea{width:100%;background:var(--card);color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:8px;font-family:monospace}
+</style>
+<meta name="theme-color" content="#185FA5"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"></head><body>
+<main id="app">
+<header class="r hd"><h1 style="margin:0;flex:1">DSTL Visualizer <small class="m"></small></h1><button id="am" onclick="showHome()" hidden>All modules</button><button id="ins" hidden onclick="ip&&ip.prompt()">Install app</button><button id="tg" onclick="theme()">Dark mode</button></header>
+<div id="home"></div>
+<section id="mod" hidden>
+<h2 id="mt"></h2>
+<div id="pz" class="r"></div>
+<div id="inp"></div>
+<div id="gx" class="cv" hidden><div class="r"><button class="on" data-t="n" onclick="gTool('n')">Add node</button><button data-t="e" onclick="gTool('e')">Add / remove edge</button><button data-t="d" onclick="gTool('d')">Delete</button></div><svg id="gs2" viewBox="0 0 340 240" width="100%" style="touch-action:none;display:block"></svg><p class="m">Tap empty space to add a node. In edge mode tap two nodes. Drag a node to move it.</p></div>
+<div id="chips" class="r"></div>
+<div id="vw" class="cv"></div>
+<div id="side" class="m"></div>
+<div id="nt" aria-live="polite"></div>
+<div class="r"><button onclick="halt();go(i-1)">Prev</button><button id="pb" onclick="tp()">Play</button><button onclick="halt();go(i+1)">Next</button><span id="ct" class="m" style="margin-left:auto"></span></div>
+<input type="range" id="sl" min="0" max="0" value="0" step="1" style="width:100%" oninput="halt();go(+this.value)">
+<div class="r"><span class="m">Speed</span><button class="sp" onclick="spd(.5)">0.5x</button><button class="sp on" onclick="spd(1)">1x</button><button class="sp" onclick="spd(2)">2x</button><button onclick="expSvg()" style="margin-left:auto">Export SVG</button><button onclick="expPng()">Export PNG</button><button onclick="exam()">Exam answer</button></div>
+<div class="lg" role="note"><span><i style="background:var(--new)"></i>New step</span><span><i style="background:var(--bad)"></i>Problem or counter-example</span><span><i style="background:var(--ok)"></i>Result</span><span><i style="background:var(--ac)"></i>Current</span></div>
+</section>
+</main>
+<div id="toast" role="alert" aria-live="assertive"></div>
+<dialog id="xm"><h2>Exam-style answer</h2><textarea id="xt" readonly rows="16"></textarea><div class="r"><button onclick="cpx()">Copy</button><button onclick="$('xm').close()">Close</button></div></dialog>
+<script>
+const $=x=>document.getElementById(x);
+let S=[],i=0,rd=null,tm=0,cur=[],n=4,md='avl',pi=-1,AN=null,gen=0,ST=null;
+let SP=1;const TQ=new Set(),RQ=new Set();
+const wait=ms=>new Promise(r=>{const o={r};o.id=setTimeout(()=>{TQ.delete(o);r()},ms/SP);TQ.add(o)});
+function killAnim(){TQ.forEach(o=>{clearTimeout(o.id);o.r()});TQ.clear();RQ.forEach(o=>{cancelAnimationFrame(o.id);o.r()});RQ.clear()}
+function chain(k){return Array.from({length:k},(_,a)=>Array.from({length:k},(_,b)=>b==a+1?1:0))}
+let M=chain(4);
+function load(s,r){halt();S=s;rd=r;i=0;pi=-1;ST=null;draw()}
+function draw(){const d=S[i],fw=pi>=0&&i==pi+1;pi=i;gen++;AN=Promise.resolve(rd(d,fw)||wait(1100));$('nt').textContent=d.note;$('ct').textContent=(i+1)+' / '+S.length;$('sl').max=S.length-1;$('sl').value=i}
+function go(k){if(!S.length)return;i=Math.max(0,Math.min(S.length-1,k));draw()}
+function halt(){tm=0;$('pb').textContent='Play'}
+async function tp(){if(tm){halt();return}if(S.length<2)return;if(i>=S.length-1)i=0;tm=1;$('pb').textContent='Pause';draw();
+while(tm&&i<S.length-1){await AN;await wait(500);if(!tm)break;go(i+1)}
+halt()}
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tw(ms,my,fn){const t0=performance.now();ms=RM?1:ms/SP;return new Promise(res=>{(function f(t){if(my!=gen){res();return}const q=Math.min(1,(t-t0)/ms);fn(q<.5?2*q*q:1-(-2*q+2)**2/2);q<1?requestAnimationFrame(f):res()})(t0)})}
+function stage(w,h){$('vw').innerHTML=`<svg width="100%" viewBox="0 0 ${w} ${h}"><g id="eg"></g><g id="ng"></g><circle id="tk" r="8" class="tk" cx="0" cy="0" style="opacity:0"/></svg>`;ST={p:{},el:{},ed:{}}}
+function sync(ids,ed,cls,lab,from){
+for(const k in ST.el)if(!ids.includes(k)){ST.el[k].remove();delete ST.el[k];delete ST.p[k]}
+const ks=ed.map(e=>e.join('|'));
+for(const k in ST.ed)if(!ks.includes(k)){ST.ed[k].remove();delete ST.ed[k]}
+ks.forEach(k=>{if(!ST.ed[k]){$('eg').insertAdjacentHTML('beforeend','<line stroke-width="2"/>');ST.ed[k]=$('eg').lastElementChild}
+const tr=cls['e'+k]=='tr',bd=cls['e'+k]=='bad',l=ST.ed[k];l.setAttribute('stroke',tr?'var(--ok)':bd?'var(--bad)':'var(--bd)');l.setAttribute('stroke-width',tr||bd?3.5:2)});
+ids.forEach(k=>{if(!ST.el[k]){$('ng').insertAdjacentHTML('beforeend',`<g><circle r="16" class="nd"/><text class="tx" text-anchor="middle" dominant-baseline="central">${k}</text><text class="bf" x="19" y="-15"></text></g>`);ST.el[k]=$('ng').lastElementChild;ST.p[k]=from[k]||[0,0]}
+const g=ST.el[k],c=cls[k]||'';g.children[0].setAttribute('class','nd '+c);g.children[1].setAttribute('class','tx '+c);g.children[2].textContent=lab[k]??''})}
+function place(){for(const k in ST.el)ST.el[k].setAttribute('transform',`translate(${ST.p[k][0]},${ST.p[k][1]})`);
+for(const k in ST.ed){const[a,b]=k.split('|'),A=ST.p[a],B=ST.p[b],l=ST.ed[k];if(A&&B){l.setAttribute('x1',A[0]);l.setAttribute('y1',A[1]);l.setAttribute('x2',B[0]);l.setAttribute('y2',B[1])}}}
+function mv(tg,ms,my){const s={};for(const k in tg)s[k]=(ST.p[k]||tg[k]).slice();return tw(ms,my,e=>{for(const k in tg)ST.p[k]=[s[k][0]+(tg[k][0]-s[k][0])*e,s[k][1]+(tg[k][1]-s[k][1])*e];place()})}
+async function tour(pts,my){if(pts.length<2)return;const tk=$('tk');tk.setAttribute('cx',pts[0][0]);tk.setAttribute('cy',pts[0][1]);tk.style.opacity=1;
+for(let j=1;j<pts.length;j++){const a=pts[j-1],b=pts[j];await tw(450,my,e=>{tk.setAttribute('cx',a[0]+(b[0]-a[0])*e);tk.setAttribute('cy',a[1]+(b[1]-a[1])*e)});if(my!=gen){tk.style.opacity=0;return}}
+await wait(200);tk.style.opacity=0}
+function clr(note){halt();gen++;ST=null;S=[];$('vw').innerHTML='';$('chips').innerHTML='';$('side').innerHTML='';$('nt').textContent=note||'';$('ct').textContent='';$('sl').max=0;$('sl').value=0}
+const MODS=[
+{u:'Unit 1: Sets and relations',t:'Relations: properties and closure',f:relBar},
+{u:'Unit 3: Logic',t:'Truth table builder',f:ttUI},
+{u:'Unit 5: Trees and graphs',t:'BST and AVL trees',f:avlUI},
+{u:'Unit 5: Trees and graphs',t:'Graph traversal: BFS and DFS',f:bfsUI}];
+function showHome(){halt();$('mod').hidden=true;$('home').hidden=false;let h='',u='';
+MODS.forEach((m,k)=>{if(m.u!=u){u=m.u;h+=`<h2>${u}</h2>`}h+=`<div class="r"><button style="width:100%;text-align:left" onclick="openMod(${k})">${m.t}</button></div>`});
+$('home').innerHTML=h+'<p class="m">Type an input, then step through the solution with Prev, Play and Next.</p>'}
+function openMod(k){$('home').hidden=true;$('mod').hidden=false;$('mt').textContent=MODS[k].t;MODS[k].f()}
+
+let zc=0;
+const mtx=(C,cl,e)=>{zc=0;return '<table><tr><th></th>'+C.map((_,j)=>`<th>${j+1}</th>`).join('')+'</tr>'+C.map((r,a)=>`<tr><th>${a+1}</th>`+r.map((v,b)=>{const c=cl[a+','+b];return `<td class="${c?c+' an ':''}${v?'o':'z'}"${e?` onclick="flip(${a},${b})" style="cursor:pointer"`:c?` style="animation-delay:${zc++*80}ms"`:''}>${v}</td>`}).join('')+'</tr>').join('')+'</table>'};
+function relBar(){
+$('inp').innerHTML=`<div class="r"><span class="m">Elements</span>${[3,4,5].map(k=>`<button class="${k==n?'on':''}" onclick="relSz(${k})">${k}</button>`).join('')}</div><div class="r"><button onclick="relRun(0)">Check properties</button><button onclick="relRun(1)">Warshall closure</button><button onclick="relEdit()">Edit</button></div>`;relEdit()}
+function relSz(k){n=k;M=chain(k);relBar()}
+function relEdit(){clr('Tap cells to toggle 0 or 1 (1 means a R b). Then pick a check.');$('vw').innerHTML=mtx(M,{},true)}
+function flip(a,b){M[a][b]^=1;$('vw').innerHTML=mtx(M,{},true)}
+function relRun(w){load(w?wst(M):pst(M),d=>{$('vw').innerHTML=mtx(d.C,d.cl,false);return wait(zc*80+600)})}
+function pst(M){
+const n=M.length,k=(a,b)=>a+','+b,st=[],pr=[];
+for(let a=0;a<n;a++)for(let b=0;b<n;b++)pr.push([a,b]);
+const add=(c,bd,note)=>{const cl={};c.forEach(x=>cl[k(...x)]='op');bd.forEach(x=>cl[k(...x)]='bad');st.push({C:M,cl,note})};
+const ones=pr.filter(p=>M[p[0]][p[1]]),L=p=>`(${p[0]+1},${p[1]+1})`;
+st.push({C:M,cl:{},note:'M[a][b] = 1 means a R b. We test four properties, one at a time.'});
+const dg=pr.filter(p=>p[0]==p[1]),dm=dg.filter(p=>!M[p[0]][p[1]]),rf=!dm.length;
+add(dg,dm,rf?'Reflexive: every (a,a) is 1, so the whole diagonal is ones.':'Not reflexive: '+dm.map(L).join(', ')+' missing (red).');
+const sy=ones.filter(p=>!M[p[1]][p[0]]);
+add(ones,sy.flatMap(p=>[p,[p[1],p[0]]]),sy.length?`Not symmetric: ${L(sy[0])} is in R but ${L([sy[0][1],sy[0][0]])} is not.`:'Symmetric: every (a,b) in R also has (b,a) in R.');
+const as=ones.filter(p=>p[0]<p[1]&&M[p[1]][p[0]]);
+add(ones,as.flatMap(p=>[p,[p[1],p[0]]]),as.length?`Not antisymmetric: ${L(as[0])} and ${L([as[0][1],as[0][0]])} are both in R, but the elements differ.`:'Antisymmetric: no two different elements point at each other.');
+let tv=null;
+for(const[a,b]of ones){for(let c=0;c<n;c++)if(M[b][c]&&!M[a][c]){tv=[a,b,c];break}if(tv)break}
+add(tv?[[tv[0],tv[1]],[tv[1],tv[2]]]:ones,tv?[[tv[0],tv[2]]]:[],tv?`Not transitive: ${L([tv[0],tv[1]])} and ${L([tv[1],tv[2]])} are in R but ${L([tv[0],tv[2]])} is not.`:'Transitive: whenever (a,b) and (b,c) are in R, (a,c) is in R too.');
+const sm=!sy.length,am=!as.length,tr=!tv;
+st.push({C:M,cl:{},note:'Result: '+(rf&&sm&&tr?'an equivalence relation (reflexive, symmetric, transitive).':rf&&am&&tr?'a partial order (reflexive, antisymmetric, transitive).':`reflexive ${rf?'yes':'no'}, symmetric ${sm?'yes':'no'}, antisymmetric ${am?'yes':'no'}, transitive ${tr?'yes':'no'}.`)});
+return st}
+function wst(M){
+const n=M.length,C=M.map(r=>r.slice()),st=[{C:M.map(r=>r.slice()),cl:{},note:'Warshall: for each middle element k, if a to k and k to b exist, add a to b.'}];
+for(let k=0;k<n;k++){const nw=[],cl={};
+for(let a=0;a<n;a++)for(let b=0;b<n;b++)if(C[a][k]&&C[k][b]&&!C[a][b]){C[a][b]=1;nw.push([a,b])}
+for(let t=0;t<n;t++){cl[t+','+k]='op';cl[k+','+t]='op'}
+nw.forEach(p=>{cl[p[0]+','+p[1]]='nw'});
+st.push({C:C.map(r=>r.slice()),cl,note:`Middle element ${k+1}: `+(nw.length?nw.map(q=>`${q[0]+1} to ${k+1} and ${k+1} to ${q[1]+1} exist, so add (${q[0]+1},${q[1]+1})`).join('; ')+'.':'no new pairs.')})}
+st[n].note+=' This is the transitive closure.';return st}
+
+const SY={'&':'∧','|':'∨','>':'→','=':'↔'};
+const RULE={'!':'¬ flips the value (T becomes F)','&':'∧ is true only when both inputs are true','|':'∨ is false only when both inputs are false','>':'→ is false only when the first is true and the second is false','=':'↔ is true when both sides match'};
+function parse(s){
+let p=0;const pk=()=>s[p];
+const iff=()=>{let l=imp();while(pk()=='='){p++;l={o:'=',a:l,b:imp()}}return l};
+const imp=()=>{const l=or();if(pk()=='>'){p++;return{o:'>',a:l,b:imp()}}return l};
+const or=()=>{let l=and();while(pk()=='|'){p++;l={o:'|',a:l,b:and()}}return l};
+const and=()=>{let l=nt();while(pk()=='&'){p++;l={o:'&',a:l,b:nt()}}return l};
+const nt=()=>{if(pk()=='!'){p++;return{o:'!',a:nt()}}return at()};
+const at=()=>{const c=pk();if(c=='('){p++;const e=iff();if(pk()!=')')throw 0;p++;return e}if(c&&/[A-Za-z]/.test(c)){p++;return{o:'v',n:c}}throw 0};
+const r=iff();if(p<s.length)throw 0;return r}
+const ts=x=>x.o=='v'?x.n:x.o=='!'?'¬'+ts(x.a):'('+ts(x.a)+SY[x.o]+ts(x.b)+')';
+const lab=x=>{const s=ts(x);return x.o=='v'||x.o=='!'?s:s.slice(1,-1)};
+const ev=(x,e)=>{if(x.o=='v')return e[x.n];if(x.o=='!')return !ev(x.a,e);const a=ev(x.a,e),b=ev(x.b,e);return x.o=='&'?a&&b:x.o=='|'?a||b:x.o=='>'?(!a||b):a==b};
+function walk(x,vs,sb){if(x.o=='v'){if(!vs.includes(x.n))vs.push(x.n);return}walk(x.a,vs,sb);if(x.b)walk(x.b,vs,sb);const k=lab(x);if(!sb.some(y=>y.k==k))sb.push({n:x,k})}
+function ttUI(){
+$('inp').innerHTML=`<div class="r"><input type="text" id="ex" value="(p->q)&amp;!r" autocapitalize="off" autocomplete="off" style="flex:1;min-width:150px;width:auto" oninput="$('er').textContent=''"><button onclick="ttSolve()">Solve</button></div><div class="r">${['¬','∧','∨','→','↔','(',')'].map(c=>`<button onclick="$('ex').value+='${c}'">${c}</button>`).join('')}</div><div id="er" class="er"></div>`;clr();ttSolve()}
+function ttSolve(){
+halt();const er=$('er');
+const s=$('ex').value.replace(/\s/g,'').replace(/<->|↔/g,'=').replace(/->|→/g,'>').replace(/¬|~/g,'!').replace(/∧|&&/g,'&').replace(/∨|\|\|/g,'|');
+if(!s){er.textContent='Enter a formula first';return}
+let t,vs=[],sb=[];
+try{t=parse(s);walk(t,vs,sb)}catch(e){er.textContent='That formula is not valid. Example: (p->q)&!r';return}
+if(!sb.length){er.textContent='Use at least one operator, for example p&q';return}
+if(vs.length>4){er.textContent='Use at most 4 variables';return}
+vs.sort();
+const m=vs.length,R=1<<m,hd=vs.concat(sb.map(y=>y.k)),rows=[];
+for(let r=0;r<R;r++){const e={};vs.forEach((v,j)=>{e[v]=!((r>>(m-1-j))&1)});rows.push(vs.map(v=>e[v]).concat(sb.map(y=>ev(y.n,e))))}
+const st=[{c:m,nc:-1,op:[],note:`${m} variable${m>1?'s':''}, so ${R} rows. Each row is one possible case (T = true, F = false).`}];
+sb.forEach((y,j)=>st.push({c:m+j+1,nc:m+j,op:[y.n.a,y.n.b].filter(Boolean).map(c=>hd.indexOf(lab(c))),note:`Column "${y.k}" is added. ${RULE[y.n.o]}.`}));
+const L=rows.map(r=>r[r.length-1]);
+st[st.length-1].note+=L.every(x=>x)?' Result: tautology (true in every row).':L.some(x=>x)?' Result: contingency (true in some rows, false in others).':' Result: contradiction (false in every row).';
+load(st,d=>{$('vw').innerHTML='<table><tr>'+hd.slice(0,d.c).map((h,c)=>`<th class="${c==d.nc?'nw an':d.op.includes(c)?'op':''}">${h}</th>`).join('')+'</tr>'+rows.map((r,ri)=>'<tr>'+r.slice(0,d.c).map((v,c)=>c==d.nc?`<td class="nw an" style="animation-delay:${ri*70}ms">${v?'T':'F'}</td>`:`<td class="${(d.op.includes(c)?'op ':'')+(v?'T':'F')}">${v?'T':'F'}</td>`).join('')+'</tr>').join('')+'</table>';return wait(R*70+700)})}
+
+function avlUI(){
+$('inp').innerHTML=`<input type="text" id="sq" value="12,15,11,24,74,7,9,21,26" autocomplete="off" oninput="$('er').textContent=''"><div class="r"><button id="mA" class="on" onclick="md='avl';mark();avlRun()">AVL</button><button id="mB" onclick="md='bst';mark();avlRun()">BST</button><button onclick="avlRun()">Run</button></div><div id="er" class="er"></div>`;md='avl';clr();avlRun()}
+function mark(){$('mA').className=md=='avl'?'on':'';$('mB').className=md=='bst'?'on':''}
+function avlRun(){
+const er=$('er'),q=$('sq').value.split(/[,\s]+/).filter(Boolean).map(Number);
+if(!q.length||q.some(x=>!Number.isFinite(x))){er.textContent='Enter numbers separated by commas';return}
+if(q.length>15){er.textContent='Use at most 15 values';return}
+cur=q;const bal=md=='avl';let root=null;const st=[];
+const H=t=>t?t.h:0,U=t=>{t.h=1+Math.max(H(t.l),H(t.r));t.b=H(t.l)-H(t.r)};
+const cp=t=>t?{v:t.v,b:t.b,l:cp(t.l),r:cp(t.r)}:null;
+const sn=(hl,note,k,pa)=>st.push({t:cp(root),hl,note,k,bal,path:pa});
+const rR=y=>{const x=y.l;y.l=x.r;x.r=y;U(y);U(x);return x};
+const rL=x=>{const y=x.r;x.r=y.l;y.l=x;U(x);U(y);return y};
+q.forEach((v,k)=>{
+if(!root){root={v,l:null,r:null,h:1,b:0};sn({[v]:'new'},`${v} is the first value, so it becomes the root.`,k);return}
+const path=[],cmp=[];let c=root,dup=false;
+for(;;){path.push(c);if(v==c.v){dup=true;break}cmp.push(`${v} ${v<c.v?'<':'>'} ${c.v}`);const s=v<c.v?'l':'r';if(!c[s]){c[s]={v,l:null,r:null,h:1,b:0};break}c=c[s]}
+if(dup){sn({},`${v} is already in the tree, so it is skipped.`,k,path.map(p=>p.v));return}
+for(let j=path.length-1;j>=0;j--)U(path[j]);
+let j=path.length;while(--j>=0&&(!bal||Math.abs(path[j].b)<2));
+sn({[v]:'new'},`Insert ${v}: ${cmp.join(', ')}. It becomes a new leaf.`+(bal?(j<0?' All balance factors stay within -1 to 1.':' Balance factors are updated.'):''),k,path.map(p=>p.v));
+if(j<0)return;
+const z=path[j];let nm;
+if(z.b>1)nm=z.l.b>=0?'LL':'LR';else nm=z.r.b<=0?'RR':'RL';
+sn({[v]:'new',[z.v]:'bad'},`Node ${z.v} is unbalanced (balance factor ${z.b}). This is the ${nm} case.`,k);
+let r;
+if(nm=='LL')r=rR(z);else if(nm=='RR')r=rL(z);else if(nm=='LR'){z.l=rL(z.l);r=rR(z)}else{z.r=rR(z);r=rL(z)}
+const par=path[j-1];if(!par)root=r;else if(par.l===z)par.l=r;else par.r=r;
+for(let t=j-1;t>=0;t--)U(path[t]);
+sn({[r.v]:'ok'},`${nm=='LL'?'Right':nm=='RR'?'Left':nm=='LR'?'Left then right':'Right then left'} rotation: ${r.v} is the new root of this subtree and the tree is balanced again.`,k)});
+let dm=0;st.forEach(s=>{(function f(t,y){if(!t)return;dm=Math.max(dm,y);f(t.l,y+1);f(t.r,y+1)})(s.t,0)});
+const MW=Math.max(q.length*40,280),MH=dm*58+56;
+load(st,async(d,fw)=>{
+$('chips').innerHTML=cur.map((v,k)=>`<span class="chip ${k<d.k?'dn':k==d.k?'nw':''}">${v}</span>`).join('');
+const P=[];let x=0;
+(function w(t,y){if(!t)return;w(t.l,y+1);t.x=x++;t.y=y;P.push(t);w(t.r,y+1)})(d.t,0);
+const mine=gen,sx=(MW-P.length*40)/2+20,tg={},lab={},ed=[],from={};
+P.forEach(t=>{const k=String(t.v);tg[k]=[sx+t.x*40,t.y*58+26];from[k]=tg[k];lab[k]=d.bal?t.b:'';[t.l,t.r].forEach(c=>{if(c)ed.push([k,String(c.v)])})});
+if(!ST)stage(MW,MH);
+if(fw&&d.path){await tour(d.path.map(v=>ST.p[v]).filter(Boolean),mine);if(mine!=gen)return}
+P.forEach(t=>[t.l,t.r].forEach(c=>{if(!c)return;const k=String(c.v);if(!ST.el[k]&&ST.p[t.v])from[k]=ST.p[t.v].slice()}));
+sync(P.map(t=>String(t.v)),ed,d.hl,lab,from);place();
+await mv(tg,650,mine)})}
+
+function bfsUI(){
+$('inp').innerHTML=`<input type="text" id="ge" value="1-2,1-3,2-4,3-4,4-5" placeholder="A-B, B-C or 1-2, 2-3" autocomplete="off" oninput="vtx()"><div class="r"><span class="m">Start vertex</span><select id="gs" class="sel"></select><button onclick="bfsRun(0)">BFS</button><button onclick="bfsRun(1)">DFS</button></div><div id="er" class="er"></div>`;clr();vtx();bfsRun(0)}
+function bfsRun(dfs){
+const er=$('er'),g=gp($('ge').value,10),E=g.E,V=g.V,s0=$('gs').value;
+if(g.err){er.textContent=g.err;return}
+if(!V.includes(s0)){er.textContent='Pick a start vertex from the dropdown';return}
+const adj={};V.forEach(v=>{adj[v]=[]});
+E.forEach(([a,b])=>{if(a!=b&&!adj[a].includes(b)){adj[a].push(b);adj[b].push(a)}});
+V.forEach(v=>adj[v].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})));
+const P={};V.forEach((v,j)=>{const t=2*Math.PI*j/V.length-Math.PI/2;P[v]=[170+105*Math.cos(t),125+95*Math.sin(t)]});
+const st=[],col={},te=[],ord=[];
+const snap=(Q,note)=>st.push({col:{...col},te:te.slice(),q:Q.slice(),ord:ord.slice(),note});
+if(!dfs){
+const q=[s0],seen=new Set(q);col[s0]='new';snap(q,`Start at ${s0}: it is discovered and joins the queue.`);
+while(q.length){const v=q.shift();col[v]='cur';ord.push(v);const f=[];
+for(const u of adj[v])if(!seen.has(u)){seen.add(u);col[u]='new';q.push(u);te.push([v,u]);f.push(u)}
+snap(q,`Take ${v} from the front of the queue. `+(f.length?`Its new neighbors ${f.join(', ')} are discovered and join the queue.`:'It has no undiscovered neighbors.'));col[v]='done'}
+snap(q,'The queue is empty, so BFS is complete.')
+}else{
+const k=[[s0,null]],seen=new Set();col[s0]='new';snap([s0],`Start at ${s0}: push it on the stack.`);
+while(k.length){const[v,p]=k.pop();if(seen.has(v))continue;seen.add(v);col[v]='cur';ord.push(v);if(p)te.push([p,v]);
+const f=[];for(const u of adj[v].slice().reverse())if(!seen.has(u)){k.push([u,v]);if(!col[u])col[u]='new';f.push(u)}
+snap(k.map(e=>e[0]),`Pop ${v} and visit it. `+(f.length?`Unvisited neighbors ${f.slice().reverse().join(', ')} are pushed (the smallest ends on top).`:'It has no unvisited neighbors to push.'));col[v]='done'}
+snap([],'The stack is empty, so DFS is complete.')}
+const miss=V.filter(v=>!col[v]);
+if(miss.length)st[st.length-1].note+=` Vertices ${miss.join(', ')} are not connected to ${s0}.`;
+const ed=[];E.forEach(([a,b])=>{if(a!=b&&!ed.some(e=>(e[0]==a&&e[1]==b)||(e[0]==b&&e[1]==a)))ed.push([a,b])});
+load(st,async(d,fw)=>{
+const mine=gen,tg={},cls={...d.col};
+V.forEach(v=>{tg[v]=P[v]});
+ed.forEach(([a,b])=>{if(d.te.some(x=>(x[0]==a&&x[1]==b)||(x[0]==b&&x[1]==a)))cls['e'+a+'|'+b]='tr'});
+$('side').innerHTML=`<b>${dfs?'Stack (top is last)':'Queue (front is first)'}:</b> ${d.q.map(v=>`<span class="chip">${v}</span>`).join(' ')||'empty'}<br><b>Order:</b> ${d.ord.join(' → ')||'-'}`;
+if(!ST){stage(340,250);DG();sync(V,ed,cls,{},tg);place()}
+const a=fw&&Object.keys(S[i-1].col).find(k=>S[i-1].col[k]=='cur'),b=Object.keys(d.col).find(k=>d.col[k]=='cur');
+if(a&&b&&a!=b){await tour([ST.p[a]||P[a],ST.p[b]||P[b]],mine);if(mine!=gen)return}
+sync(V,ed,cls,{},tg);place();
+await wait(450)})}
+
+const PL=['#D85A30','#378ADD','#1D9E75','#BA7517','#7F77DD','#D4537E','#639922','#5F5E5A'];
+const dk=c=>{for(const k in ST.ed)if(c['e'+k]!='tr'&&c['e'+k]!='bad')ST.ed[k].setAttribute('stroke','var(--mut)')};
+
+function posUI(){
+$('inp').innerHTML=`<div class="r"><span class="m">Numbers</span><input type="text" id="ps" value="1,2,3,4,6,12" autocomplete="off" style="flex:1;min-width:120px;width:auto" oninput="$('er').textContent=''"><button onclick="posRun(0)">Divisibility</button><button onclick="$('ps').value='1,2,3,5,30';posRun(0)">Non-distributive demo</button></div><div class="r"><span class="m">Set</span><input type="text" id="pe" value="a,b,c" autocomplete="off" style="flex:1;min-width:120px;width:auto" oninput="$('er').textContent=''"><button onclick="posRun(1)">Power set</button></div><div class="r"><span class="m">Quick set size</span>${[2,3,4].map(k=>`<button onclick="pSz(${k})">${k}</button>`).join('')}</div><div id="er" class="er"></div>`;clr();posRun(0)}
+function pSz(k){$('pe').value='a,b,c,d'.slice(0,2*k-1);posRun(1)}
+function posRun(sb){
+const er=$('er');let E,lb,le;DR={};
+if(sb){
+const T=[...new Set($('pe').value.split(/[,\s]+/).filter(Boolean))];
+if(T.length<2||T.length>4||T.some(t=>t.length>2)){er.textContent='Enter 2 to 4 different elements (up to 2 characters each), like a,b,c or 1,2,3,4';return}
+E=[...Array(1<<T.length).keys()];lb=x=>x?T.filter((_,j)=>x>>j&1).join(T.some(t=>t.length>1)?',':''):'∅';le=(a,b)=>(a&b)==a}
+else{E=[...new Set($('ps').value.split(/[,\s]+/).filter(Boolean).map(Number))].sort((a,b)=>a-b);
+if(E.length<2||E.length>12||E.some(x=>!Number.isInteger(x)||x<1)){er.textContent='Enter 2 to 12 positive whole numbers, like 1,2,3,6';return}
+lb=String;le=(a,b)=>b%a==0}
+const lt=(a,b)=>a!=b&&le(a,b),cv=E.flatMap(a=>E.filter(b=>lt(a,b)&&!E.some(c=>lt(a,c)&&lt(c,b))).map(b=>[a,b])),rk={};
+E.forEach(x=>{rk[x]=Math.max(0,...cv.filter(e=>e[1]==x).map(e=>rk[e[0]]+1))});
+const mx=Math.max(...E.map(x=>rk[x])),cn=E.reduce((c,x)=>(c[rk[x]]=(c[rk[x]]||0)+1,c),{}),W=Math.max(340,54*Math.max(...Object.values(cn))),H=mx*64+54,P={},lv=[];
+E.forEach(x=>{(lv[rk[x]]=lv[rk[x]]||[]).push(x)});
+lv.forEach((a,l)=>a.forEach((x,j)=>{P[lb(x)]=[W*(j+1)/(a.length+1),H-27-l*64]}));
+const J=(a,b,up)=>{const u=E.filter(x=>up?le(a,x)&&le(b,x):le(x,a)&&le(x,b));return u.find(x=>u.every(y=>up?le(x,y):le(y,x)))};
+const mn=E.filter(x=>!E.some(y=>lt(y,x))),mq=E.filter(x=>!E.some(y=>lt(x,y))),ids=E.map(lb),st=[],ed=[];
+const sh=(cls,note,tr)=>st.push({ed:ed.map(e=>e.slice()),cls,note,tr:tr||[]});
+sh({},`Each element is a point. Here a ≤ b means ${sb?'a is a subset of b':'a divides b'}. Bigger elements will sit higher.`);
+for(let l=1;l<=mx;l++){const ne=cv.filter(e=>rk[e[1]]==l);ne.forEach(e=>ed.push([lb(e[0]),lb(e[1])]));
+sh({},`Level ${l}: join each element to those it covers (nothing sits between them). New lines: ${ne.map(e=>lb(e[0])+'–'+lb(e[1])).join(', ')}.`,ne.map(e=>lb(e[0])+'|'+lb(e[1])))}
+const c1={};mn.forEach(x=>{c1[lb(x)]='new'});mq.forEach(x=>{c1[lb(x)]='cur'});
+sh(c1,`Minimal (yellow): ${mn.map(lb).join(', ')}. Maximal (blue): ${mq.map(lb).join(', ')}. `+(mn.length==1?`Least element: ${lb(mn[0])}. `:'No least element. ')+(mq.length==1?`Greatest element: ${lb(mq[0])}.`:'No greatest element.'));
+const pr=E.flatMap((a,j)=>E.slice(j+1).map(b=>[a,b])),bp=pr.find(p=>J(p[0],p[1],1)===undefined||J(p[0],p[1],0)===undefined);
+if(bp){const[a,b]=bp,u=J(a,b,1),g=J(a,b,0),ub=E.filter(x=>le(a,x)&&le(b,x)),lw=E.filter(x=>le(x,a)&&le(x,b)),S=l=>l.length?'{'+l.map(lb).join(', ')+'}':'none';
+sh({[lb(a)]:'bad',[lb(b)]:'bad'},`Not a lattice. Counter-example: take ${lb(a)} and ${lb(b)} (red). Upper bounds: ${S(ub)}; ${u===undefined?(ub.length?'none of them is below all the others, so there is no least upper bound':'there are none, so there is no least upper bound'):'least upper bound = '+lb(u)}. Lower bounds: ${S(lw)}; ${g===undefined?(lw.length?'none of them is above all the others, so there is no greatest lower bound':'there are none, so there is no greatest lower bound'):'greatest lower bound = '+lb(g)}. A lattice needs both for every pair.`)}
+else{
+const[a,b]=pr.find(p=>!le(p[0],p[1])&&!le(p[1],p[0]))||pr[0],u=J(a,b,1),g=J(a,b,0),lo=mn[0],hi=mq[0],Jn=(x,y)=>J(x,y,1),Mt=(x,y)=>J(x,y,0);
+sh({[lb(g)]:'new',[lb(u)]:'ok',[lb(a)]:'cur',[lb(b)]:'cur'},`Example pair ${lb(a)}, ${lb(b)} (blue): join (least upper bound) = ${lb(u)} (green), meet (greatest lower bound) = ${lb(g)} (yellow). Every pair has both, so this is a lattice.`);
+sh({[lb(lo)]:'ok',[lb(hi)]:'ok'},`Bounded: least element 0 = ${lb(lo)} and greatest element 1 = ${lb(hi)}.`);
+const cp=x=>E.filter(y=>Jn(x,y)==hi&&Mt(x,y)==lo),c2={};E.forEach(x=>{c2[lb(x)]=cp(x).length?'ok':'bad'});
+const cm=E.every(x=>cp(x).length);
+sh(c2,`Complements (join = 1, meet = 0): ${E.map(x=>lb(x)+(cp(x).length?' ↔ '+cp(x).map(lb).join('/'):' none')).join('; ')}. ${cm?'Every element has one, so it is complemented.':'Red elements have none, so it is not complemented.'}`);
+let dt=null,mt=null;
+E.forEach(x=>E.forEach(y=>E.forEach(z=>{if(!dt&&Mt(x,Jn(y,z))!=Jn(Mt(x,y),Mt(x,z)))dt=[x,y,z];if(!mt&&le(x,z)&&Jn(x,Mt(y,z))!=Mt(Jn(x,y),z))mt=[x,y,z]})));
+const c3={};(dt||mt||[]).forEach(x=>{c3[lb(x)]='bad'});
+sh(c3,(dt?`Not distributive. Counter-example (red): x = ${lb(dt[0])}, y = ${lb(dt[1])}, z = ${lb(dt[2])}. Then x∧(y∨z) = ${lb(Mt(dt[0],Jn(dt[1],dt[2])))}, but (x∧y)∨(x∧z) = ${lb(Jn(Mt(dt[0],dt[1]),Mt(dt[0],dt[2])))}. The two sides differ, so the distributive law fails. `:'Distributive: x∧(y∨z) = (x∧y)∨(x∧z) holds for every triple x, y, z. ')+(mt?`Not modular: x = ${lb(mt[0])}, y = ${lb(mt[1])}, z = ${lb(mt[2])} with x ≤ z, yet x∨(y∧z) differs from (x∨y)∧z. `:'Modular: yes. ')+(cm&&!dt?'Complemented and distributive, so it is a Boolean algebra.':''))}
+load(st,async d=>{const mine=gen,cls={...d.cls};d.tr.forEach(k=>{cls['e'+k]='tr'});
+if(!ST){stage(W,H);DG()}sync(ids,d.ed,cls,{},{});place();dk(cls);await mv({...P,...DR},650,mine)})}
+
+function fnUI(){
+$('inp').innerHTML=`<div class="r"><span class="m">A</span><input type="text" id="fa" value="1,2,3,4" style="flex:1;width:auto;min-width:80px"><span class="m">B</span><input type="text" id="fb" value="a,b,c,d,e" style="flex:1;width:auto;min-width:80px"></div><input type="text" id="ff" value="1-a,2-b,3-c,4-d" autocomplete="off" oninput="$('er').textContent=''"><div class="r"><button onclick="fnRun()">Classify f: A to B</button></div><div id="er" class="er"></div>`;clr();fnRun()}
+function fnRun(){
+const er=$('er'),L=s=>[...new Set(s.split(/[,\s]+/).filter(Boolean))],A=L($('fa').value),B=L($('fb').value),F=L($('ff').value).map(s=>s.split('-'));
+if(!A.length||!B.length||A.length>7||B.length>7){er.textContent='Use 1 to 7 elements in each set';return}
+if(!F.length||F.some(p=>p.length!=2||!A.includes(p[0])||!B.includes(p[1]))){er.textContent='Write pairs like 1-a using elements of A and B';return}
+const H=Math.max(A.length,B.length)*46+16,ya=A.map((_,j)=>(H-A.length*46)/2+23+j*46),yb=B.map((_,j)=>(H-B.length*46)/2+23+j*46);
+const nd=(x,y,t,c)=>`<g transform="translate(${x},${y})"><circle r="16" class="nd ${c||''}"/><text class="tx ${c||''}" text-anchor="middle" dominant-baseline="central">${t}</text></g>`;
+const sv=d=>`<svg width="100%" viewBox="0 0 340 ${H}"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--mut)"/></marker></defs>`+d.ar.map((p,j)=>`<line class="ar ${p[2]} ${j==d.nw?'n':''}" pathLength="1" marker-end="url(#ah)" x1="86" y1="${ya[A.indexOf(p[0])]}" x2="252" y2="${yb[B.indexOf(p[1])]}"/>`).join('')+A.map((a,j)=>nd(70,ya[j],a,d.c[a])).join('')+B.map((b,j)=>nd(270,yb[j],b,d.c[b])).join('')+'</svg>';
+const ar=[],st=[],sh=(note,nw,c)=>st.push({ar:ar.map(p=>p.slice()),nw,c:c||{},note});
+sh('Left is the domain A, right is the codomain B. A function sends every element of A to exactly one element of B.',-1);
+F.forEach((p,k)=>{ar.push([p[0],p[1],'']);sh(`Draw the arrow ${p[0]} → ${p[1]}, meaning f(${p[0]}) = ${p[1]}.`,k)});
+const ms=A.filter(a=>!F.some(p=>p[0]==a)),dp=A.filter(a=>F.filter(p=>p[0]==a).length>1);
+if(ms.length||dp.length){const c={};ms.concat(dp).forEach(a=>{c[a]='bad'});ar.forEach(p=>{if(dp.includes(p[0]))p[2]='x'});
+sh('Not a function: '+(ms.length?`${ms.join(', ')} has no arrow. `:'')+(dp.length?`${dp.join(', ')} has more than one arrow. `:'')+'Every element of A needs exactly one arrow.',-1,c)}
+else{
+const im=B.map(b=>A.filter(a=>F.some(p=>p[0]==a&&p[1]==b))),inj=im.every(x=>x.length<2),sur=im.every(x=>x.length>0),c1={},c2={},un=B.filter((_,j)=>!im[j].length);
+B.forEach((b,j)=>{if(im[j].length>1){c1[b]='bad';im[j].forEach(a=>{c1[a]='bad'})}c2[b]=im[j].length?'ok':'bad'});
+ar.forEach(p=>{p[2]=im[B.indexOf(p[1])].length>1?'x':'g'});
+sh(inj?'One-one (injective): no element of B is hit twice, so different inputs give different outputs.':'Not one-one: '+B.filter((_,j)=>im[j].length>1).map(b=>`${im[B.indexOf(b)].join(' and ')} both map to ${b}`).join('; ')+' (red).',-1,c1);
+ar.forEach(p=>{p[2]=''});
+sh(sur?'Onto (surjective): every element of B is hit, so the range equals B.':`Not onto: ${un.join(', ')} ${un.length>1?'receive':'receives'} no arrow (red), so the range is smaller than B.`,-1,c2);
+sh(`Result: f is ${inj&&sur?'bijective (one-one and onto), so an inverse function exists':inj?'one-one but not onto':sur?'onto but not one-one':'neither one-one nor onto'}. Range = {${B.filter((_,j)=>im[j].length).join(', ')}}, |A| = ${A.length}, |B| = ${B.length}.`,-1)}
+load(st,d=>{$('vw').innerHTML=sv(d);return wait(d.nw>=0?800:500)})}
+
+let kv=4;const KD={2:'1,2,3',3:'1,3,5,6,7',4:'0,1,2,5,8,9,10'};
+function kmUI(k){if(k)kv=k;
+$('inp').innerHTML=`<input type="text" id="km" value="${KD[kv]}" autocomplete="off" oninput="$('er').textContent=''"><div class="r"><span class="m">Variables</span>${[2,3,4].map(q=>`<button class="${q==kv?'on':''}" onclick="kmUI(${q})">${q}</button>`).join('')}<button onclick="kmRun()">Simplify</button></div><div id="er" class="er"></div>`;clr();kmRun()}
+function kmT(n,ones,cl){const rb=n>2?2:1,G=k=>k==1?['0','1']:['00','01','11','10'],R=G(rb),C=G(n-rb);
+return `<table><tr><th>${'ABCD'.slice(0,rb)}\\${'ABCD'.slice(rb,n)}</th>`+C.map(c=>`<th>${c}</th>`).join('')+'</tr>'+R.map(r=>`<tr><th>${r}</th>`+C.map(c=>{const m=parseInt(r+c,2),k=cl[m];return `<td class="${k?k+' an ':''}${ones.has(m)?'o':'z'}">${ones.has(m)?1:0}<br><small>${m}</small></td>`}).join('')+'</tr>').join('')+'</table>'}
+function kmRun(){
+const er=$('er'),n=kv,N=1<<n,ms=[...new Set($('km').value.split(/[,\s]+/).filter(Boolean).map(Number))].sort((a,b)=>a-b);
+if(!ms.length||ms.some(m=>!Number.isInteger(m)||m<0||m>=N)){er.textContent=`Enter minterm numbers from 0 to ${N-1}, like 0,1,5`;return}
+const ones=new Set(ms),V='ABCD'.slice(0,n),cb=[];
+for(let mk=0;mk<N;mk++)for(let v=0;v<N;v++){if(v&mk)continue;const cov=[];for(let m=0;m<N;m++)if((m&~mk)==v)cov.push(m);if(cov.every(m=>ones.has(m)))cb.push({mk,v,cov})}
+const PI=cb.filter(p=>!cb.some(q=>q.cov.length>p.cov.length&&p.cov.every(m=>q.cov.includes(m)))),sel=[],es=new Set(),rest=new Set(ms);
+ms.forEach(m=>{const c=PI.filter(p=>p.cov.includes(m));if(c.length==1&&!sel.includes(c[0])){sel.push(c[0]);es.add(c[0])}});
+sel.forEach(p=>p.cov.forEach(m=>rest.delete(m)));
+while(rest.size){const b=PI.filter(p=>!sel.includes(p)).sort((x,y)=>y.cov.filter(m=>rest.has(m)).length-x.cov.filter(m=>rest.has(m)).length)[0];sel.push(b);b.cov.forEach(m=>rest.delete(m))}
+const tt=p=>[...V].map((c,j)=>{const b=n-1-j;return p.mk>>b&1?'':c+(p.v>>b&1?'':"'")}).join('')||'1',tl=[];
+const st=[{cl:{},f:'',note:`${n} variables, ${N} cells. Each cell shows its minterm number; 1 means F is true. Neighbouring cells differ in one variable, and the edges wrap around.`}];
+sel.forEach((p,k)=>{const cl={};sel.slice(0,k).forEach(q=>q.cov.forEach(m=>{cl[m]='op'}));p.cov.forEach(m=>{cl[m]='nw'});tl.push(tt(p));
+st.push({cl,f:tl.join(' + '),note:`Group ${k+1}: ${p.cov.length} cells (${p.cov.join(', ')})${es.has(p)?', essential because it alone covers a 1':''}. Variables that change inside the group drop out, so the term is ${tt(p)}.`})});
+const al={};ms.forEach(m=>{al[m]='op'});
+st.push({cl:al,f:tl.join(' + '),note:`Result: F = ${tl.join(' + ')}. ${sel.length} group${sel.length>1?'s':''} cover all ${ms.length} ones.`});
+load(st,d=>{$('vw').innerHTML=kmT(n,ones,d.cl);$('side').innerHTML=d.f?`<b>F =</b> ${d.f}`:'';return wait(450)})}
+
+function grUI(){
+$('inp').innerHTML=`<div class="r"><span class="m">n</span><input type="text" id="gn" value="6" style="width:64px"><button onclick="grRun(0)">Integers mod n, add</button><button onclick="grRun(1)">Units mod n, multiply</button></div><div id="er" class="er"></div>`;clr();grRun(0)}
+function grRun(u){
+const nn=+$('gn').value,er=$('er');
+if(!Number.isInteger(nn)||nn<2||nn>20){er.textContent='Use a whole number from 2 to 20';return}
+const gd=(a,b)=>b?gd(b,a%b):a,G=[...Array(nn).keys()].filter(a=>!u||gd(a,nn)==1),op=(a,b)=>u?a*b%nn:(a+b)%nn,e=u?1:0,sy=u?'×':'+';
+const inv=a=>G.find(b=>op(a,b)==e),od=a=>{let x=a,k=1;while(x!=e){x=op(x,a);k++}return k},gn=G.filter(a=>od(a)==G.length);
+const cl=g=>{const s=new Set(g);let c=1;while(c){c=0;for(const a of[...s])for(const b of[...s]){const x=op(a,b);if(!s.has(x)){s.add(x);c=1}}}return[...s].sort((x,y)=>x-y)};
+const H=[],K=new Set(),ad=g=>{const c=cl(g),k=c.join();if(!K.has(k)){K.add(k);H.push(c)}};
+ad([e]);G.forEach(a=>{ad([a]);G.forEach(b=>ad([a,b]))});ad(G);H.sort((a,b)=>a.length-b.length);
+const tb=d=>`<table class="${G.length>10?'sm':''}"><tr><th>${sy}</th>`+G.map(b=>`<th>${b}</th>`).join('')+'</tr>'+G.map((a,r)=>`<tr><th>${a}</th>`+G.map((b,c)=>{const k=d.cl(a,b,op(a,b));return `<td class="${k?k+' ':''}${d.an?'an':''}"${d.an?` style="animation-delay:${(r+c)*50}ms"`:''}>${d.sh?op(a,b):''}</td>`}).join('')+'</tr>').join('')+'</table>';
+const z=()=>'',st=[{sh:0,cl:z,side:'',note:`G = {${G.join(', ')}} under ${u?'multiplication':'addition'} mod ${nn}. The table will hold a ${sy} b for every pair of elements.`},
+{sh:1,an:1,cl:z,side:'',note:`Closure: every answer is again in G, so ${sy} is a binary operation on G (and it is associative).`},
+{sh:1,cl:(a,b)=>a==e||b==e?'op':'',side:'',note:`Identity e = ${e}: its row and column just repeat the headings (blue).`},
+{sh:1,cl:(a,b,v)=>v==e?'nw':'',side:'',note:`Inverses: wherever the answer is ${e} (yellow), the two headings are inverses. ${G.map(a=>`${a}⁻¹ = ${inv(a)}`).join(', ')}.`},
+{sh:1,cl:z,side:G.map(a=>`<span class="chip${gn.includes(a)?' nw':''}">${a}: order ${od(a)}</span>`).join(' '),note:`Order of an element = smallest k with a^k = ${e}. `+(gn.length?`Generators (order ${G.length}, yellow): ${gn.join(', ')}. One element generates all of G, so G is cyclic.`:`No element has order ${G.length}, so G is not cyclic.`)}];
+H.slice(0,8).forEach(h=>{const cs=[],sn=new Set();G.forEach(a=>{if(!sn.has(a)){const c=h.map(x=>op(a,x)).sort((x,y)=>x-y);c.forEach(x=>sn.add(x));cs.push(c)}});
+st.push({sh:1,cl:(a,b)=>h.includes(a)&&h.includes(b)?'op':'',side:'<b>Left cosets aH:</b> '+cs.map((c,k)=>`<span class="chip" style="background:hsl(${k*67+20},75%,78%);color:#1f1e1c">{${c.join(', ')}}</span>`).join(' '),note:`Subgroup H = {${h.join(', ')}} of order ${h.length} (blue block). Lagrange: ${cs.length} cosets × ${h.length} elements = ${G.length}, so ${h.length} divides ${G.length}.`})});
+load(st,d=>{$('vw').innerHTML=tb(d);$('side').innerHTML=d.side;return wait(d.an?G.length*100+500:300)})}
+
+function gcUI(){
+$('inp').innerHTML=`<input type="text" id="ge" value="1-2,2-3,3-4,4-1,1-3" placeholder="A-B, B-C or 1-2, 2-3" autocomplete="off" oninput="$('er').textContent=''"><div class="r"><button onclick="gcRun(0)">Colouring</button><button onclick="gcRun(1)">Bipartite?</button><button onclick="gcRun(2)">Euler path</button></div><div id="er" class="er"></div>`;clr();gcRun(0)}
+function gcRun(w){
+const er=$('er'),g=gp($('ge').value,10);
+if(g.err){er.textContent=g.err;return}
+if(!g.E.length||(w==2&&g.V.some(v=>!g.E.some(e=>e.includes(v))))){er.textContent=g.E.length?'For an Euler path every vertex must touch an edge. Remove the lone vertex.':'Enter at least one edge, like A-B.';return}
+const E=g.E,V=g.V.slice().sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+const adj={},ed=[],P={},dg={},st=[],c={};V.forEach(v=>{adj[v]=[]});
+E.forEach(([a,b])=>{if(!adj[a].includes(b)){adj[a].push(b);adj[b].push(a);ed.push([a,b])}});
+V.forEach((v,j)=>{const t=2*Math.PI*j/V.length-Math.PI/2;P[v]=[170+105*Math.cos(t),125+95*Math.sin(t)];dg[v]=adj[v].length});
+const ek=(a,b)=>ed.find(x=>(x[0]==a&&x[1]==b)||(x[0]==b&&x[1]==a)).join('|');
+if(w==0){
+st.push({fill:{},cls:{},lab:dg,note:'Colour the vertices so that touching ones differ. Small numbers are degrees. We colour from the highest degree to the lowest.'});
+V.slice().sort((a,b)=>dg[b]-dg[a]).forEach(v=>{const us=[...new Set(adj[v].filter(u=>c[u]!==undefined).map(u=>c[u]))];let k=0;while(us.includes(k))k++;c[v]=k;
+st.push({fill:{...c},cls:{[v]:'new'},lab:{},note:`Vertex ${v}: its neighbours already use ${us.length?'colour '+us.map(x=>x+1).join(', '):'no colours'}, so ${v} gets colour ${k+1}.`})});
+const t=Math.max(...Object.values(c))+1;
+st.push({fill:{...c},cls:{},lab:{},note:`All vertices are coloured with ${t} colour${t>1?'s':''}, so the chromatic number is at most ${t}. Greedy gives an upper bound, not always the minimum.`})}
+else if(w==1){let bd=null;
+for(const s of V){if(c[s]!==undefined)continue;c[s]=0;const q=[s];st.push({fill:{...c},cls:{[s]:'new'},lab:{},note:`Start at ${s} and put it in set 1 (orange).`});
+while(q.length&&!bd){const v=q.shift();for(const u of adj[v]){if(c[u]===undefined){c[u]=1-c[v];q.push(u);st.push({fill:{...c},cls:{[u]:'new'},lab:{},note:`${u} touches ${v}, so it goes in the other set (${c[u]?'blue':'orange'}).`})}else if(c[u]==c[v]){bd=[v,u];break}}}
+if(bd)break}
+st.push(bd?{fill:{...c},cls:{[bd[0]]:'bad',[bd[1]]:'bad'},lab:{},tr:[ek(...bd)],note:`${bd[0]} and ${bd[1]} touch but sit in the same set. That closes an odd cycle, so the graph is not bipartite.`}:{fill:{...c},cls:{},lab:{},note:'Every edge joins set 1 to set 2, so the graph is bipartite (no odd cycle).'})}
+else{const od=V.filter(v=>dg[v]%2),sn=new Set([V[0]]),q=[V[0]];
+while(q.length){const v=q.pop();adj[v].forEach(u=>{if(!sn.has(u)){sn.add(u);q.push(u)}})}
+const cn=sn.size==V.length,oc={};od.forEach(v=>{oc[v]='bad'});
+st.push({fill:{},cls:{},lab:dg,note:'Small numbers are degrees (edges meeting at a vertex). An Euler path uses every edge exactly once.'});
+st.push({fill:{},cls:oc,lab:dg,note:`Odd-degree vertices (red): ${od.length?od.join(', '):'none'}. `+(!cn?'The graph is not connected, so there is no Euler path.':od.length==0?'Connected with all degrees even: an Euler circuit exists.':od.length==2?'Connected with exactly two odd vertices: an Euler path exists between them.':'More than two odd vertices: there is no Euler path or circuit.')});
+if(cn&&od.length<3){const A={};V.forEach(v=>{A[v]=adj[v].slice()});const s=od[0]||V[0],sk=[s],pa=[];
+while(sk.length){const v=sk[sk.length-1];if(A[v].length){const u=A[v].pop();A[u].splice(A[u].indexOf(v),1);sk.push(u)}else pa.push(sk.pop())}
+pa.reverse();st.push({fill:{},cls:{[s]:'ok'},lab:dg,trail:pa,note:`Euler ${od.length?'path':'circuit'}: ${pa.join(' → ')}. The token walks it edge by edge.`})}}
+load(st,async d=>{const mine=gen,cls={...d.cls};(d.tr||[]).forEach(k=>{cls['e'+k]='tr'});
+if(!ST){stage(340,250);DG()}sync(V,ed,cls,d.lab||{},P);place();dk(cls);
+V.forEach(v=>{const f=d.fill[v],g=ST.el[v].children;g[0].style.fill=f===undefined?'':PL[f];g[1].style.fill=f===undefined?'':'#fff'});
+if(d.trail)await tour(d.trail.map(v=>ST.p[v]||P[v]),mine);else await wait(500)})}
+
+function pgUI(){
+$('inp').innerHTML=`<div class="r"><span class="m">Pigeons</span><input type="text" id="pn" value="11" style="width:64px"><span class="m">Holes</span><input type="text" id="pk" value="4" style="width:64px"><button onclick="pgRun()">Drop</button></div><div id="er" class="er"></div>`;clr();pgRun()}
+function pgRun(){
+const n=+$('pn').value,k=+$('pk').value,er=$('er');
+if(!Number.isInteger(n)||!Number.isInteger(k)||n<1||n>24||k<1||k>8){er.textContent='Use 1 to 24 pigeons and 1 to 8 holes';return}
+const hs=Array.from({length:k},()=>[]),cm=Math.ceil(n/k),sn=()=>hs.map(a=>a.slice()),st=[{hs:sn(),h:-1,note:`${n} pigeons must fit into ${k} holes. We drop them one at a time into a hole with the fewest pigeons.`}];
+for(let p=1;p<=n;p++){const h=hs.reduce((b,a,j)=>a.length<hs[b].length?j:b,0);hs[h].push(p);
+st.push({hs:sn(),h,note:`Pigeon ${p} goes to hole ${h+1}. `+(p<=k?'That hole was empty.':p==k+1?'Every hole already has a pigeon, so one hole must now hold two. This is the pigeonhole principle.':`Holes now hold ${hs.map(a=>a.length).join(', ')}.`)})}
+st.push({hs:sn(),h:-1,fin:1,note:n>k?`Even the fairest spread leaves a hole with at least ⌈${n}/${k}⌉ = ${cm} pigeons. If every hole held at most ${cm-1}, the total would be at most ${k*(cm-1)}, which is less than ${n}.`:`${n} ≤ ${k}, so every pigeon can have its own hole. A shared hole is forced only when pigeons outnumber holes.`});
+load(st,d=>{const mx=Math.max(...d.hs.map(a=>a.length));
+$('vw').innerHTML='<div class="hl">'+d.hs.map((a,j)=>`<div><div class="hb ${d.fin&&n>k&&a.length==mx?'op':''}">`+a.map((p,q)=>`<span class="chip${j==d.h&&q==a.length-1?' nw an':''}">${p}</span>`).join('')+`</div><div class="m" style="text-align:center">Hole ${j+1}</div></div>`).join('')+'</div>';return wait(600)})}
+
+function gp(s,max){
+const T=s.replace(/\s*(->|→|–|—)\s*/g,'-').replace(/\s*-\s*/g,'-').split(/[,;\s]+/).filter(Boolean),E=[],V=[];
+for(const t of T){const p=t.split('-');
+if(p.length>2||p.some(x=>!/^\w{1,6}$/.test(x)))return{E,V,err:`"${t}" is not valid. Write edges like A-B or 1-2 (letters or digits, up to 6 characters).`};
+if(p.length==2&&p[0]==p[1])return{E,V,err:`"${t}" is a self-loop (a vertex joined to itself). Use two different vertices.`};
+p.forEach(x=>{if(!V.includes(x))V.push(x)});
+if(p.length==2&&!E.some(e=>(e[0]==p[0]&&e[1]==p[1])||(e[0]==p[1]&&e[1]==p[0])))E.push(p)}
+if(!V.length)return{E,V,err:'Enter some edges, for example A-B, B-C, C-A.'};
+if(V.length>max)return{E,V,err:`Use at most ${max} vertices (you entered ${V.length}).`};
+return{E,V,err:''}}
+
+function vtx(){$('er').textContent='';const g=gp($('ge').value,10),s=$('gs'),o=s.value;
+s.innerHTML=g.V.map(v=>`<option>${v}</option>`).join('');if(g.V.includes(o))s.value=o}
+
+let DR={};const DG=()=>{ST.dg=1;$('vw').firstElementChild.setAttribute('data-dg',1)}; (()=>{let k=null;const v=$('vw');
+v.addEventListener('pointerdown',e=>{const g=ST&&ST.dg&&e.target.closest('#ng>g');if(!g)return;k=Object.keys(ST.el).find(x=>ST.el[x]===g);if(k===undefined)return;e.preventDefault();v.setPointerCapture(e.pointerId)});
+v.addEventListener('pointermove',e=>{if(k===null||!ST||!ST.el[k])return;const s=v.querySelector('svg'),b=s.viewBox.baseVal,q=new DOMPoint(e.clientX,e.clientY).matrixTransform(s.getScreenCTM().inverse()),p=[Math.max(16,Math.min(b.width-16,q.x)),Math.max(16,Math.min(b.height-16,q.y))];ST.p[k]=p;DR[k]=p;place()});
+const up=()=>{k=null};v.addEventListener('pointerup',up);v.addEventListener('pointercancel',up)})();
+
+const _sy=sync;sync=function(...a){_sy(...a);
+for(const k in ST.el)if(!ST.el[k].querySelector('title'))ST.el[k].insertAdjacentHTML('beforeend',`<title>${k}${ST.dg?' (drag to move)':''}</title>`);
+for(const k in ST.ed)if(!ST.ed[k].firstChild)ST.ed[k].insertAdjacentHTML('beforeend',`<title>Edge ${k.replace('|',' to ')}</title>`)};
+
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t=='dark':matchMedia('(prefers-color-scheme: dark)').matches};
+function theme(set){const d=set||(isDark()?'light':'dark');document.documentElement.dataset.theme=d;$('tg').textContent=d=='dark'?'Light mode':'Dark mode';try{localStorage.setItem('dstl-theme',d)}catch(e){}}
+
+const _sh=showHome,_om=openMod;
+showHome=()=>{_sh();$('am').hidden=true};
+openMod=k=>{_om(k);$('am').hidden=false;scrollTo(0,0)};
+
+function spd(v){SP=v;document.querySelectorAll('.sp').forEach(b=>b.classList.toggle('on',parseFloat(b.textContent)==v))}
+
+function dl(blob, ext){
+const a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'dstl-visualizer' + ext;
+a.click();
+URL.revokeObjectURL(a.href);
+}
+
+function expSvg(){const v=$('vw'),w=Math.max(v.scrollWidth,320),h=v.scrollHeight,cs=getComputedStyle(document.documentElement),
+vr=['bg','fg','mut','bd','card','ac','acb','new','newt','bad','ok'].map(k=>`--${k}:${cs.getPropertyValue('--'+k)}`).join(';'),
+css=[...document.styleSheets].map(t=>{try{return[...t.cssRules].map(r=>r.cssText).join('\n')}catch(e){return''}}).join('\n'),
+x=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="${vr};width:${w}px;font:15px system-ui,sans-serif;color:var(--fg);background:var(--bg)"><style><![CDATA[${css}]]></style>${new XMLSerializer().serializeToString(v.cloneNode(true))}</div></foreignObject></svg>`;
+dl(new Blob([x],{type:'image/svg+xml'}),'.svg')}
+
+function expPng(){
+const svgEl = $('vw').querySelector('svg');
+if(!svgEl) return;
+const xml = new XMLSerializer().serializeToString(svgEl);
+const svgBlob = new Blob([xml], {type:'image/svg+xml;charset=utf-8'});
+const url = URL.createObjectURL(svgBlob);
+const img = new Image();
+img.onload = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = svgEl.viewBox.baseVal.width || 400;
+  canvas.height = svgEl.viewBox.baseVal.height || 300;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg') || '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+  URL.revokeObjectURL(url);
+  canvas.toBlob(blob => blob && dl(blob, '.png'));
+};
+img.src = url;
+}
+
+function exam(){
+const xm = $('xm'), xt =$('xt');
+if(!S.length){ xt.value = 'Pehle kisi module ko run karo, phir step-by-step exam answer dekho.'; xm.showModal(); return; }
+let txt = `DSTL Exam Answer Step-by-Step Summary:\n\n`;
+S.forEach((st, idx) => {
+  txt += `Step ${idx+1}: ${st.note}\n`;
+});
+xt.value = txt;
+xm.showModal();
+}
+
+function cpx(){
+const xt = $('xt');
+if(!navigator.clipboard){
+  xt.select();
+  document.execCommand('copy');
+  alert('Copied to clipboard!');
+  return;
+}
+navigator.clipboard.writeText(xt.value).then(() => {
+  alert('Copied to clipboard!');
+}).catch(() => {
+  xt.select();
+  document.execCommand('copy');
+});
+}
+
+let ip=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e;$('ins').hidden=false});
+(()=>{const m={name:'DSTL Visualizer',short_name:'DSTL',start_url:location.href.split('#')[0],display:'standalone',background_color:'#0f1720',theme_color:'#185FA5',
+icons:[{src:`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='20' fill='%23185FA5'/%3E%3Cpath d='M30 30L66 48L30 68' stroke='%23fff' stroke-width='4' fill='none'/%3E%3Ccircle cx='30' cy='30' r='9' fill='%23fff'/%3E%3Ccircle cx='66' cy='48' r='9' fill='%23FAC775'/%3E%3Ccircle cx='30' cy='68' r='9' fill='%23fff'/%3E%3C/svg%3E`,sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]};
+try{const l=document.createElement('link');l.rel='manifest';l.href='data:application/manifest+json,'+encodeURIComponent(JSON.stringify(m));document.head.appendChild(l)}catch(e){}
+const sw="const C='dstl-v3';self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>{if(e.request.method!='GET')return;e.respondWith(caches.open(C).then(c=>fetch(e.request).then(r=>{c.put(e.request,r.clone());return r}).catch(()=>c.match(e.request))))})";
+try{if('serviceWorker' in navigator&&/^https?:/.test(location.protocol)){const R=u=>navigator.serviceWorker.register(u);R('data:text/javascript;charset=utf-8,'+encodeURIComponent(sw)).catch(()=>R(URL.createObjectURL(new Blob([sw],{type:'text/javascript'}))).catch(()=>R('sw.js').catch(()=>{})))}}catch(e){}})();
+
+let WL={};const _st=stage;stage=function(w,h){_st(w,h);WL={}};
+const _pl=place;place=function(){_pl();for(const k in WL){const[a,b]=k.split('|'),A=ST.p[a],B=ST.p[b];if(A&&B){WL[k].setAttribute('x',(A[0]+B[0])/2);WL[k].setAttribute('y',(A[1]+B[1])/2-5)}}};
+function gw(s){const T=s.replace(/\s*([-:])\s*/g,'$1').split(/[,;\s]+/).filter(Boolean),E=[],W={},V=[];
+for(const t of T){const m=/^(\w{1,6})-(\w{1,6}):(\d+(?:\.\d+)?)$/.exec(t);
+if(!m)return{err:`"${t}" is not valid. Write A-B:4 (two vertices, then the weight).`};
+const a=m[1],b=m[2];if(a==b)return{err:`"${t}" is a self-loop. Use two different vertices.`};
+if(E.some(e=>(e[0]==a&&e[1]==b)||(e[0]==b&&e[1]==a)))return{err:`Edge ${a}-${b} is repeated. List each edge once.`};
+[a,b].forEach(x=>{if(!V.includes(x))V.push(x)});E.push([a,b]);W[a+'|'+b]=+m[3]}
+if(!E.length)return{err:'Enter weighted edges, for example A-B:4, B-C:2, A-C:7.'};
+if(V.length>8)return{err:'Use at most 8 vertices.'};
+return{E,W,V}}
+const LN=l=>l.map((x,j)=>`<div class="${j==l.length-1?'nw an':'op'}" style="padding:6px 10px;margin:4px 0;border-radius:8px;font:13px/1.5 ui-monospace,monospace;overflow-x:auto">${x}</div>`).join('');
+const fr=x=>{if(Math.abs(x)<1e-9)return'0';for(let q=1;q<=360;q++){const p=Math.round(x*q);if(Math.abs(x-p/q)<1e-9)return q==1?''+p:p+'/'+q}return''+(+x.toFixed(4))};
+
+function ieUI(){const f=(i,l,v,p)=>`<div class="r"><span class="m">${l}</span><input type="text" id="${i}" value="${v}" placeholder="${p||''}" autocomplete="off" style="flex:1;min-width:100px;width:auto" oninput="$('er').textContent=''"></div>`;
+$('inp').innerHTML=f('sa','A','1,2,3,4,5,6')+f('sb','B','4,5,6,7,8')+f('sc','C','6,8,9,10','leave empty for 2 sets')+`<div class="r"><button onclick="ieRun()">Count the union</button></div><div id="er" class="er"></div>`;clr();ieRun()}
+function ieRun(){
+const er=$('er'),L=t=>[...new Set(t.split(/[,\s]+/).filter(Boolean))],X=[L($('sa').value),L($('sb').value),L($('sc').value)],k=X[2].length?3:2;
+if(!X[0].length||!X[1].length||X.some(a=>a.length>12)){er.textContent='Enter elements for A and B (at most 12 each). C is optional.';return}
+const N='ABC',S=X.slice(0,k),U=[...new Set(S.flat())],I=m=>U.filter(x=>S.every((t,j)=>!(m>>j&1)||t.includes(x))),Ex=r=>U.filter(x=>S.every((t,j)=>t.includes(x)==!!(r>>j&1))),
+nm=m=>[0,1,2].filter(j=>m>>j&1).map(j=>N[j]).join('∩'),M1=k==3?[1,2,4]:[1,2],M2=k==3?[3,5,6]:[3],M3=k==3?[7]:[],
+sz=a=>a.map(m=>I(m).length),sm=a=>a.reduce((x,y)=>x+y,0),s1=sm(sz(M1)),s2=s1-sm(sz(M2)),s3=s2+sm(sz(M3)),un=N.slice(0,k).split('').join('∪'),
+lst=(a,z)=>a.map((m,j)=>`|${nm(m)}| = ${z[j]}`).join(', ');
+const st=[{hl:[],c:'',f:'',note:`Goal: count the elements of ${un} without counting any element twice. The numbers in the diagram are how many elements sit in each region.`},
+{hl:M1,c:'new',f:sz(M1).join(' + ')+' = '+s1,note:`Step 1, add the sizes of the sets: ${lst(M1,sz(M1))}. An element in two or more sets is counted several times, so ${s1} may be too big.`},
+{hl:M2,c:'bad',f:`${s1} − (${sz(M2).join(' + ')}) = ${s2}`,note:`Step 2, subtract the pair overlaps (red): ${lst(M2,sz(M2))}. Each overlap element was counted twice, so we remove it once. Running total: ${s2}.`}];
+if(k==3)st.push({hl:M3,c:'new',f:`${s2} + ${sz(M3)[0]} = ${s3}`,note:`Step 3, elements of A∩B∩C were added 3 times and subtracted 3 times (net 0), so add |A∩B∩C| = ${sz(M3)[0]} back once. Running total: ${s3}.`});
+st.push({hl:[1,2,3,4,5,6,7].filter(m=>m<1<<k),c:'ok',f:`|${un}| = ${s3}`,note:`Result: |${un}| = ${s3}. Check by listing the union: {${U.join(', ')}} has ${U.length} elements${U.length==s3?' ✓':' ✗'}.`});
+const Cc=k==3?[[125,80],[195,80],[160,140]]:[[125,100],[195,100]],Z=k==3?{1:[92,66],2:[228,66],4:[160,178],3:[160,52],5:[120,120],6:[200,120],7:[160,98]}:{1:[92,100],2:[228,100],3:[160,100]},R=60,
+reg=(m,f)=>{const b=[0,1,2].filter(j=>m>>j&1);let h=`<circle cx="${Cc[b[0]][0]}" cy="${Cc[b[0]][1]}" r="${R}" fill="${f}" fill-opacity=".8"${b[1]!==undefined?` clip-path="url(#k${b[1]})"`:''}/>`;return b[2]!==undefined?`<g clip-path="url(#k${b[2]})">${h}</g>`:h};
+load(st,d=>{const f={new:'var(--new)',bad:'var(--bad)',ok:'var(--ok)'}[d.c];
+$('vw').innerHTML=`<svg width="100%" viewBox="0 0 320 230"><defs>${Cc.map((c,j)=>`<clipPath id="k${j}"><circle cx="${c[0]}" cy="${c[1]}" r="${R}"/></clipPath>`).join('')}</defs>`+d.hl.map(m=>reg(m,f)).join('')+Cc.map((c,j)=>`<circle cx="${c[0]}" cy="${c[1]}" r="${R}" fill="none" stroke="var(--fg)" stroke-width="2"/><text x="${c[0]+(j==0?-72:j==1?72:0)}" y="${c[1]+(j==2?76:-52)}" text-anchor="middle" class="tx">${N[j]}</text>`).join('')+Object.keys(Z).map(r=>`<text x="${Z[r][0]}" y="${Z[r][1]}" text-anchor="middle" dominant-baseline="central" class="tx">${Ex(+r).length}</text>`).join('')+'</svg>';
+$('side').innerHTML=d.f?`<b>${d.f}</b>`:''})}
+
+function rcUI(){$('inp').innerHTML=`<div class="m">a(n) = c1·a(n-1) + c2·a(n-2) + k·rⁿ. Use k = 0 for homogeneous, c2 = 0 for 1st order.</div><div class="r">${[['c1',5],['c2',-6],['k',0],['r',1],['a0',1],['a1',0]].map(([n,v])=>`<span class="m">${n}</span><input type="text" id="r_${n}" value="${v}" inputmode="decimal" style="width:58px" oninput="$('er').textContent=''">`).join('')}<button onclick="rcRun()">Solve</button></div><div id="er" class="er"></div>`;clr();rcRun()}
+function rcRun(){
+const er=$('er'),[c1,c2,k,r,a0,a1]=['c1','c2','k','r','a0','a1'].map(n=>+$('r_'+n).value);
+if([c1,c2,k,r,a0,a1].some(x=>!Number.isFinite(x))||(!c1&&!c2)||(k&&!r)){er.textContent='Enter valid numbers. c1 or c2 must be non-zero.';return}
+const o2=!!c2,D=c1*c1+4*c2,q=Math.sqrt(Math.abs(D)),pa=x=>x<0||fr(x).includes('/')?`(${fr(x)})`:fr(x),P=x=>o2?x*x-c1*x-c2:x-c1,sg=x=>x<0?'− '+fr(-x):'+ '+fr(x);
+let ty,rt,h,bs;
+if(!o2){ty=0;rt=[c1];h=`A·${pa(c1)}ⁿ`;bs=n=>[c1**n]}
+else if(D>1e-9){ty=1;rt=[(c1+q)/2,(c1-q)/2];h=`A·${pa(rt[0])}ⁿ + B·${pa(rt[1])}ⁿ`;bs=n=>[rt[0]**n,rt[1]**n]}
+else if(Math.abs(D)<=1e-9){ty=2;rt=[c1/2];h=`(A + B·n)·${pa(rt[0])}ⁿ`;bs=n=>[rt[0]**n,n*rt[0]**n]}
+else{ty=3;const a=c1/2,b=q/2,p=Math.hypot(a,b),t=Math.atan2(b,a);rt=[a,b,p,t];h=`${fr(p)}ⁿ·(A·cos nθ + B·sin nθ)`;bs=n=>[p**n*Math.cos(n*t),p**n*Math.sin(n*t)]}
+let m=0,C=0,pt=()=>0,pl='';
+if(k){m=Math.abs(P(r))<1e-9?(o2&&Math.abs(2*r-c1)<1e-9?2:1):0;
+C=m?-k/((-1)**m*c1/r+(-2)**m*c2/r**2):k/(1-c1/r-c2/r**2);pt=n=>C*(m?n**m:1)*r**n;pl=`${pa(C)}${m?'·n'+(m>1?'²':''):''}·${pa(r)}ⁿ`}
+let A,B=0;
+if(!o2)A=a0-pt(0);else{const[x0,y0]=bs(0),[x1,y1]=bs(1),e0=a0-pt(0),e1=a1-pt(1),dt=x0*y1-y0*x1;A=(e0*y1-y0*e1)/dt;B=(x0*e1-x1*e0)/dt}
+const cA=pa(A),cB=pa(B),hf=ty==0?`${cA}·${pa(c1)}ⁿ`:ty==1?`${cA}·${pa(rt[0])}ⁿ + ${cB}·${pa(rt[1])}ⁿ`:ty==2?`(${cA} + ${cB}·n)·${pa(rt[0])}ⁿ`:`${fr(rt[2])}ⁿ·(${cA}·cos nθ + ${cB}·sin nθ)`,fin=hf+(k?' + '+pl:'');
+const seq=[a0];if(o2)seq.push(a1);for(let n=o2?2:1;n<8;n++)seq.push(c1*seq[n-1]+(o2?c2*seq[n-2]:0)+k*r**n);
+const fv=n=>bs(n)[0]*A+(o2?bs(n)[1]*B:0)+pt(n),fx=x=>''+(+x.toFixed(4)),L=[],st=[],ad=(l,note)=>{L.push(l);st.push({ln:L.slice(),note})};
+ad(`a(n) = ${fr(c1)}·a(n-1)${o2?` ${sg(c2)}·a(n-2)`:''}${k?` ${sg(k)}·${pa(r)}^n`:''},  a(0) = ${fr(a0)}${o2?`, a(1) = ${fr(a1)}`:''}`,k?'Non-homogeneous: solve homogeneous first, add particular solution.':'Homogeneous: find characteristic roots.');
+ad(`Characteristic equation: ${o2?`x² ${sg(-c1)}x${sg(-c2)} = 0`:`x ${sg(-c1)} = 0`}`,'Set a(n) = xⁿ to get roots.');
+ad(ty==0?`Root: x = ${fr(c1)}`:ty==1?`Roots x = ${fr(rt[0])} and x = ${fr(rt[1])}`:ty==2?`Repeated root x = ${fr(rt[0])}`:`Complex roots ${fr(rt[0])} ± ${fr(rt[1])}i`,'Root solution form.');
+ad(`Homogeneous solution: h(n) = ${h}`,'Constants set by initial conditions.');
+if(k)ad(`Trial: p(n) = ${m?`C·n${m>1?'²':''}·`:'C·'}${pa(r)}ⁿ  ⇒  C = ${fr(C)}`,'Particular trial solution.');
+ad(`General solution: a(n) = ${h}${k?' + '+pl:''}`,'Combined solution.');
+ad(`Use initial values: A = ${fr(A)}${o2?`, B = ${fr(B)}`:''}`,'Constants solved.');
+ad(`a(n) = ${fin}`,'Final closed form. Verified below.');st[st.length-1].tb=1;
+load(st,d=>{$('vw').innerHTML=LN(d.ln)+(d.tb?'<table><tr><th>n</th>'+seq.map((_,n)=>`<th>${n}</th>`).join('')+'</tr><tr><th>recurrence</th>'+seq.map(x=>`<td>${fx(x)}</td>`).join('')+'</tr><tr><th>formula</th>'+seq.map((_,n)=>`<td class="an" style="animation-delay:${n*90}ms">${fx(fv(n))}</td>`).join('')+'</tr><tr><th>match</th>'+seq.map((x,n)=>Math.abs(x-fv(n))<1e-6*Math.max(1,Math.abs(x))?'<td class="T">✓</td>':'<td class="F">✗</td>').join('')+'</tr></table>':'');return wait(d.tb?1200:500)})}
+
+function trUI(){$('inp').innerHTML=`<input type="text" id="tl" value="A,B,C,D,E,#,F" autocomplete="off" oninput="$('er').textContent=''"><div class="r"><button onclick="trRun(0)">Preorder</button><button onclick="trRun(1)">Inorder</button><button onclick="trRun(2)">Postorder</button></div><p class="m">Level-order list: root first, then each level left to right, # for missing child.</p><div id="er" class="er"></div>`;clr();trRun(1)}
+function trRun(m){
+const er=$('er'),a=$('tl').value.split(/[,\s]+/).filter(Boolean),re=a.filter(x=>x!='#');
+if(!a.length||a.length>15||a[0]=='#'||new Set(re).size!=re.length||a.some(x=>!/^(\w{1,3}|#)$/.test(x))){er.textContent='Enter 1 to 15 different labels, root first, # for missing child.';return}
+const nd=[];a.forEach((x,j)=>{nd[j]=x!='#'&&(!j||nd[(j-1)>>1])?{id:x}:null});
+if(a.some((x,j)=>x!='#'&&!nd[j])){er.textContent='A node cannot hang under a missing (#) parent.';return}
+nd.forEach((t,j)=>{if(t){t.l=nd[2*j+1]||null;t.r=nd[2*j+2]||null}});
+const eu=[],P={},ids=[],ed=[];let xi=0,dm=0;
+(function f(t,y){if(!t)return;dm=Math.max(dm,y);eu.push([t.id,0]);f(t.l,y+1);eu.push([t.id,1]);P[t.id]=[20+xi++*40,y*58+26];ids.push(t.id);f(t.r,y+1);eu.push([t.id,2]);if(t.l)ed.push([t.id,t.l.id]);if(t.r)ed.push([t.id,t.r.id])})(nd[0],0);
+const nmv=['Preorder (Root, Left, Right)','Inorder (Left, Root, Right)','Postorder (Left, Right, Root)'][m],why=['reach node first','left subtree finished','both subtrees finished'][m],out=[],st=[{out:[],cur:null,path:[],note:`${nmv}. Walker navigates tree.`}];let last=0;
+eu.forEach((e,j)=>{if(e[1]==m){const pth=eu.slice(last,j+1).map(x=>x[0]).filter((x,q,r)=>!q||x!=r[q-1]);last=j;out.push(e[0]);st.push({out:out.slice(),cur:e[0],path:pth,note:`Visit ${e[0]}: ${why}. Output: ${out.join(' ')}.`})}});
+const all=[0,1,2].map(q=>eu.filter(e=>e[1]==q).map(e=>e[0]).join(' '));
+st.push({out:out.slice(),cur:null,path:[],note:`Done. Preorder: ${all[0]}. Inorder: ${all[1]}. Postorder: ${all[2]}.`});
+load(st,async d=>{const mine=gen,cls={};ids.forEach(v=>{if(d.out.includes(v))cls[v]='ok'});if(d.cur)cls[d.cur]='cur';
+if(!ST){stage(Math.max(280,ids.length*40+40),dm*58+56);DG()}
+sync(ids,ed,cls,{},P);place();
+$('side').innerHTML=`<b>${nmv.split(' ')[0]} output:</b> ${d.out.map(v=>`<span class="chip">${v}</span>`).join(' ')||'-'}`;
+if(d.path.length>1)await tour(d.path.map(v=>ST.p[v]),mine);else await wait(400)})}
+
+function spUI(){$('inp').innerHTML=`<input type="text" id="we" value="A-B:4,A-C:2,B-C:1,B-D:5,C-D:8,C-E:10,D-E:2" placeholder="A-B:4, B-C:2" autocomplete="off" oninput="vtw()"><div class="r"><span class="m">Start</span><select id="ws" class="sel"></select><button onclick="spRun(0)">Dijkstra</button><button onclick="spRun(1)">Kruskal</button><button onclick="spRun(2)">Prim</button></div><div id="er" class="er"></div>`;clr();vtw();spRun(0)}
+function vtw(){$('er').textContent='';const g=gw($('we').value),s=$('ws'),o=s.value,V=g.V||[];s.innerHTML=V.map(v=>`<option>${v}</option>`).join('');if(V.includes(o))s.value=o}
+function spRun(w){
+const er=$('er'),g=gw($('we').value);if(g.err){er.textContent=g.err;return}
+const{E,W,V}=g,s0=$('ws').value,K=(a,b)=>E.find(e=>(e[0]==a&&e[1]==b)||(e[0]==b&&e[1]==a)).join('|'),wt=(a,b)=>W[K(a,b)],adj={},P={};
+if(!V.includes(s0)){er.textContent='Pick a start vertex from the dropdown.';return}
+V.forEach(v=>{adj[v]=[]});E.forEach(([a,b])=>{adj[a].push(b);adj[b].push(a)});
+V.forEach((v,j)=>{const t=2*Math.PI*j/V.length-Math.PI/2;P[v]=[170+105*Math.cos(t),125+95*Math.sin(t)]});
+const st=[],tr=[],rj=[],col={},lab={},snap=note=>st.push({tr:tr.slice(),rj:rj.slice(),col:{...col},lab:{...lab},note});let tot=0;
+
+if(w==0){
+  const D={},pr={},dn=new Set(),F=x=>x==Infinity?'∞':x,lb=()=>{V.forEach(v=>{lab[v]=F(D[v])})};
+  V.forEach(v=>{D[v]=Infinity});D[s0]=0;lb();col[s0]='new';
+  snap(`Dijkstra from ${s0}: every distance starts at ∞ except ${s0} = 0. Each round we finalise the closest unfinished vertex, then relax its edges.`);
+  while(dn.size < V.length){
+    let u = null, minD = Infinity;
+    for(const v of V) if(!dn.has(v) && D[v] < minD){ minD = D[v]; u = v; }
+    if(!u || D[u] == Infinity) break;
+    dn.add(u); col[u] = 'ok';
+    if(pr[u]) tr.push(K(pr[u], u));
+    snap(`Finalise vertex ${u} (min distance ${D[u]}).`);
+    for(const v of adj[u]){
+      if(dn.has(v)) continue;
+      const w0 = wt(u, v), alt = D[u] + w0;
+      if(alt < D[v]){
+        D[v] = alt; pr[v] = u; lb();
+        snap(`Relax edge ${u}-${v} (weight ${w0}): new distance to ${v} is ${alt}.`);
+      }
+    }
+  }
+  snap(`Dijkstra complete. Shortest paths calculated.`);
+} else if(w==1){
+  const sortedE = E.slice().sort((a,b)=>wt(a[0],a[1]) - wt(b[0],b[1]));
+  const parent = {}; V.forEach(v => parent[v] = v);
+  const find = v => parent[v] === v ? v : (parent[v] = find(parent[v]));
+  snap(`Kruskal MST: Sort edges by weight. Pick lightest edges without forming cycles.`);
+  for(const [a,b] of sortedE){
+    const ra = find(a), rb = find(b), eKey = K(a,b), w0 = wt(a,b);
+    if(ra !== rb){
+      parent[ra] = rb;
+      tr.push(eKey);
+      tot += w0;
+      col[a] = 'ok'; col[b] = 'ok';
+      snap(`Add edge ${a}-${b} (weight ${w0}). Total MST weight = ${tot}.`);
+    } else {
+      rj.push(eKey);
+      snap(`Skip edge ${a}-${b} (weight ${w0}): creates a cycle.`);
+    }
+  }
+  snap(`Kruskal MST complete. Minimum spanning tree weight = ${tot}.`);
+} else {
+  const inMST = new Set([s0]);
+  col[s0] = 'ok';
+  snap(`Prim MST: start at ${s0}. Grow tree by adding lightest connected edge.`);
+  while(inMST.size < V.length){
+    let bestE = null, minW = Infinity;
+    for(const u of inMST){
+      for(const v of adj[u]){
+        if(!inMST.has(v)){
+          const w0 = wt(u,v);
+          if(w0 < minW){ minW = w0; bestE = [u,v]; }
+        }
+      }
+    }
+    if(!bestE) break;
+    const [u,v] = bestE;
+    inMST.add(v);
+    tr.push(K(u,v));
+    tot += minW;
+    col[v] = 'ok';
+    snap(`Add edge ${u}-${v} (weight ${minW}) to tree. Total MST weight = ${tot}.`);
+  }
+  snap(`Prim MST complete. Minimum spanning tree weight = ${tot}.`);
+}
+
+load(st, async d => {
+  const mine = gen, cls = { ...d.col };
+  (d.tr || []).forEach(k => { cls['e' + k] = 'tr'; });
+  (d.rj || []).forEach(k => { cls['e' + k] = 'bad'; });
+  if(!ST){ stage(340, 250); DG(); }
+  sync(V, E.map(e => [e[0], e[1]]), cls, d.lab || {}, P);
+  place();ooo
+  dk(cls);
+  E.forEach(([a, b]) => {
+    const k = K(a, b), w0 = wt(a, b);
+    if(!WL[k]){
+      $('eg').insertAdjacentHTML('beforeend', `<text class="bf" text-anchor="middle" fill="var(--mut)">${w0}</text>`);
+      WL[k] = $('eg').lastElementChild;
+    }
+  });
+  place();
+  await wait(500);
+});
+}
+
+MODS.push(
+{u:'Unit 1: Sets and relations',t:'POSET, Hasse diagram and lattices',f:posUI},
+{u:'Unit 1: Sets and relations',t:'Inclusion-exclusion principle',f:ieUI},
+{u:'Unit 2: Functions and Boolean algebra',t:'Functions: one-one and onto',f:fnUI},
+{u:'Unit 2: Functions and Boolean algebra',t:'Karnaugh map (K-map) simplification',f:kmUI},
+{u:'Unit 4: Algebraic structures',t:'Groups, subgroups, cosets and Lagrange',f:grUI},
+{u:'Unit 5: Trees and graphs',t:'Graph colouring, bipartite and Euler',f:gcUI},
+{u:'Unit 5: Combinatorics',t:'Pigeonhole principle',f:pgUI},
+{u:'Unit 5: Recurrence relations',t:'Linear recurrence solver',f:rcUI},
+{u:'Unit 5: Trees and graphs',t:'Tree traversals (Pre, In, Post)',f:trUI},
+{u:'Unit 5: Trees and graphs',t:'Shortest path & MST (Dijkstra, Kruskal, Prim)',f:spUI});
+
+MODS.sort((a,b)=>a.u[5].localeCompare(b.u[5]));
+showHome();
+
+let t0=null;try{t0=localStorage.getItem('dstl-theme')}catch(e){}
+if(t0)theme(t0);else $('tg').textContent=isDark()?'Light mode':'Dark mode';
+</script>
+</body></html>
